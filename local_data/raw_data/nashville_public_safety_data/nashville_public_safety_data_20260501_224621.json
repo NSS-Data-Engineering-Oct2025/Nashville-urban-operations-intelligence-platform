@@ -1,0 +1,509 @@
+{
+    "displayFieldName": "FacilityName",
+    "fieldAliases": {
+        "FacilityName": "Facility Name",
+        "Address": "address",
+        "PhoneNumber": "Phone Number",
+        "GLOBALID": "GLOBALID",
+        "CommanderName": "Commander Name",
+        "CommunityCoordinator": "CommunityCoordinator",
+        "Website": "Website",
+        "City": "City",
+        "State": "State",
+        "ZipCode": "ZipCode",
+        "created_user": "created_user",
+        "created_date": "created_date",
+        "last_edited_user": "last_edited_user",
+        "last_edited_date": "last_edited_date",
+        "OBJECTID": "OBJECTID"
+    },
+    "geometryType": "esriGeometryPoint",
+    "spatialReference": {
+        "wkid": 102736,
+        "latestWkid": 2274
+    },
+    "fields": [
+        {
+            "name": "FacilityName",
+            "type": "esriFieldTypeString",
+            "alias": "Facility Name",
+            "length": 31
+        },
+        {
+            "name": "Address",
+            "type": "esriFieldTypeString",
+            "alias": "address",
+            "length": 30
+        },
+        {
+            "name": "PhoneNumber",
+            "type": "esriFieldTypeString",
+            "alias": "Phone Number",
+            "length": 15
+        },
+        {
+            "name": "GLOBALID",
+            "type": "esriFieldTypeGlobalID",
+            "alias": "GLOBALID",
+            "length": 38
+        },
+        {
+            "name": "CommanderName",
+            "type": "esriFieldTypeString",
+            "alias": "Commander Name",
+            "length": 50
+        },
+        {
+            "name": "CommunityCoordinator",
+            "type": "esriFieldTypeString",
+            "alias": "CommunityCoordinator",
+            "length": 50
+        },
+        {
+            "name": "Website",
+            "type": "esriFieldTypeString",
+            "alias": "Website",
+            "length": 255
+        },
+        {
+            "name": "City",
+            "type": "esriFieldTypeString",
+            "alias": "City",
+            "length": 50
+        },
+        {
+            "name": "State",
+            "type": "esriFieldTypeString",
+            "alias": "State",
+            "length": 2
+        },
+        {
+            "name": "ZipCode",
+            "type": "esriFieldTypeString",
+            "alias": "ZipCode",
+            "length": 10
+        },
+        {
+            "name": "created_user",
+            "type": "esriFieldTypeString",
+            "alias": "created_user",
+            "length": 255
+        },
+        {
+            "name": "created_date",
+            "type": "esriFieldTypeDate",
+            "alias": "created_date",
+            "length": 8
+        },
+        {
+            "name": "last_edited_user",
+            "type": "esriFieldTypeString",
+            "alias": "last_edited_user",
+            "length": 255
+        },
+        {
+            "name": "last_edited_date",
+            "type": "esriFieldTypeDate",
+            "alias": "last_edited_date",
+            "length": 8
+        },
+        {
+            "name": "OBJECTID",
+            "type": "esriFieldTypeOID",
+            "alias": "OBJECTID"
+        }
+    ],
+    "features": [
+        {
+            "attributes": {
+                "FacilityName": "Headquarters",
+                "Address": "200 James Robertson Pkwy",
+                "PhoneNumber": "(615) 862-7400",
+                "GLOBALID": "{345FF3F3-2689-4562-A448-1612BCB67197}",
+                "CommanderName": "Chief John Drake",
+                "CommunityCoordinator": null,
+                "Website": "https://www.nashville.gov/departments/police/chief-police",
+                "City": "Nashville",
+                "State": "TN",
+                "ZipCode": null,
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": "EPGIS",
+                "last_edited_date": 1762968251000,
+                "OBJECTID": 1
+            },
+            "geometry": {
+                "x": 1738469.943541661,
+                "y": 668683.7970833331
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "East Precinct",
+                "Address": "936 E. Trinity Ln",
+                "PhoneNumber": "(615) 862-7600",
+                "GLOBALID": "{529326A3-D8D0-47EF-868A-8B87A82FD455}",
+                "CommanderName": "Commander Harold Burke",
+                "CommunityCoordinator": "Commander Harold Burke",
+                "Website": "http://www.nashville.gov/Police-Department/Precincts/East-Precinct.aspx",
+                "City": "Nashville",
+                "State": "TN",
+                "ZipCode": "37207",
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": "EPGIS",
+                "last_edited_date": 1762968548000,
+                "OBJECTID": 2
+            },
+            "geometry": {
+                "x": 1748116.3474999964,
+                "y": 682362.2681249976
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "West Precinct",
+                "Address": "5500 Charlotte Pike",
+                "PhoneNumber": "(615) 862-7747",
+                "GLOBALID": "{3554E0B9-DC99-4BD6-B00B-A5FF9452D18E}",
+                "CommanderName": "Commander Jason Proctor",
+                "CommunityCoordinator": "Commander Jason Proctor",
+                "Website": "http://www.nashville.gov/Police-Department/Precincts/West-Precinct.aspx",
+                "City": "Nashville",
+                "State": "TN",
+                "ZipCode": "37209",
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": "EPGIS",
+                "last_edited_date": 1762968560000,
+                "OBJECTID": 3
+            },
+            "geometry": {
+                "x": 1715926.6433333308,
+                "y": 662792.3912499994
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "Central Precinct",
+                "Address": "601 Korean Veterans Blvd",
+                "PhoneNumber": "(615) 862-7611",
+                "GLOBALID": "{B1AD2762-F808-4577-B10D-6F1BCD3055FD}",
+                "CommanderName": "Commander Ricky Bearden",
+                "CommunityCoordinator": "Sergeant Misty Hobbs",
+                "Website": "http://www.nashville.gov/Police-Department/Precincts/Central-Precinct.aspx",
+                "City": "Nashville",
+                "State": "TN",
+                "ZipCode": "37203",
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": "EPGIS",
+                "last_edited_date": 1762968568000,
+                "OBJECTID": 4
+            },
+            "geometry": {
+                "x": 1738997.4439583272,
+                "y": 664283.3552083373
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "South Precinct",
+                "Address": "5101 Harding Place",
+                "PhoneNumber": "(615) 862-7744",
+                "GLOBALID": "{6E05CDF3-A2F0-4BBA-ACBD-EFCF51CB6259}",
+                "CommanderName": "Commander Kevin Lovell",
+                "CommunityCoordinator": "Sergeant Deniz Ismailovic",
+                "Website": "http://www.nashville.gov/Police-Department/Precincts/South-Precinct.aspx",
+                "City": "Nashville",
+                "State": "TN",
+                "ZipCode": "37211",
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": "EPGIS",
+                "last_edited_date": 1762968587000,
+                "OBJECTID": 5
+            },
+            "geometry": {
+                "x": 1765392.4527083337,
+                "y": 639831.1143749952
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "Hermitage Precinct",
+                "Address": "3701 James Kay Ln",
+                "PhoneNumber": "(615) 880-1776",
+                "GLOBALID": "{01DC0571-CCF4-493B-9CD7-070009D5E1BF}",
+                "CommanderName": "Commander Ken Walburn",
+                "CommunityCoordinator": "Sergeant Robert Weaver",
+                "Website": "http://www.nashville.gov/Police-Department/Precincts/Hermitage-Precinct.aspx",
+                "City": "Hermitage",
+                "State": "TN",
+                "ZipCode": "37076",
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": "EPGIS",
+                "last_edited_date": 1762968606000,
+                "OBJECTID": 6
+            },
+            "geometry": {
+                "x": 1786697.674791664,
+                "y": 672144.9027083367
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "North Precinct",
+                "Address": "2231 26th Ave N",
+                "PhoneNumber": "(615) 862-4410",
+                "GLOBALID": "{CAE9CBC1-A06E-4351-BA3E-A2757DE0F93A}",
+                "CommanderName": "Commander Steven Bowers",
+                "CommunityCoordinator": "Sergeant James Freeman",
+                "Website": "http://www.nashville.gov/Police-Department/Precincts/North-Precinct.aspx",
+                "City": "Nashville",
+                "State": "TN",
+                "ZipCode": "37208",
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": "EPGIS",
+                "last_edited_date": 1762968633000,
+                "OBJECTID": 7
+            },
+            "geometry": {
+                "x": 1726736.3543750048,
+                "y": 676344.7729166597
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "Domestic Violence Center",
+                "Address": "811 2nd Ave S",
+                "PhoneNumber": "(615) 880-3000",
+                "GLOBALID": "{C97F51FB-5C1E-4D5A-8B3D-83777225431B}",
+                "CommanderName": "Capt. Michelle Richter",
+                "CommunityCoordinator": null,
+                "Website": null,
+                "City": null,
+                "State": null,
+                "ZipCode": null,
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": null,
+                "last_edited_date": null,
+                "OBJECTID": 8
+            },
+            "geometry": {
+                "x": 1741337.1260416657,
+                "y": 663080.9722916633
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "MNPD Training Academy",
+                "Address": "2715 Tucker Rd",
+                "PhoneNumber": "(615) 862-7617",
+                "GLOBALID": "{C10CCB5E-EF75-414C-B402-AC377D941007}",
+                "CommanderName": "Capt. Keith Stephens",
+                "CommunityCoordinator": null,
+                "Website": null,
+                "City": null,
+                "State": null,
+                "ZipCode": null,
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": null,
+                "last_edited_date": null,
+                "OBJECTID": 9
+            },
+            "geometry": {
+                "x": 1724794.490624994,
+                "y": 683610.2900000066
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "Vehicle Impound/Auto Theft",
+                "Address": "1201 Freightliner Dr",
+                "PhoneNumber": "(615) 862-7800",
+                "GLOBALID": "{3730882F-52F2-4C65-8A38-77193BBE8F0E}",
+                "CommanderName": " ",
+                "CommunityCoordinator": null,
+                "Website": "https://www.nashville.gov/departments/police/support-services/facilities-management/vehicle-impound",
+                "City": "Nashville",
+                "State": "TN",
+                "ZipCode": "37210",
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": null,
+                "last_edited_date": null,
+                "OBJECTID": 10
+            },
+            "geometry": {
+                "x": 1751517.753124997,
+                "y": 664620.9083333313
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "Madison Precinct",
+                "Address": "430 Myatt Dr",
+                "PhoneNumber": "(615) 880-3111",
+                "GLOBALID": "{6581135F-6A8F-429A-BF38-C66932027E8C}",
+                "CommanderName": "Commander Brian Anderson",
+                "CommunityCoordinator": "Sergeant Henry Particelli",
+                "Website": "http://www.nashville.gov/Police-Department/Precincts/Madison-Precinct.aspx",
+                "City": "Madison",
+                "State": "TN",
+                "ZipCode": "37115",
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": "EPGIS",
+                "last_edited_date": 1762968669000,
+                "OBJECTID": 11
+            },
+            "geometry": {
+                "x": 1764894.5597916692,
+                "y": 706881.2316666692
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "Metro Southeast",
+                "Address": "1417 Murfreesboro Pk",
+                "PhoneNumber": " ",
+                "GLOBALID": "{1855D01F-D4A4-47BE-9705-E06C8DDF3C02}",
+                "CommanderName": "Commander Sean Richmond",
+                "CommunityCoordinator": null,
+                "Website": null,
+                "City": null,
+                "State": null,
+                "ZipCode": null,
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": "EPGIS",
+                "last_edited_date": 1762968683000,
+                "OBJECTID": 12
+            },
+            "geometry": {
+                "x": 1764203.829791665,
+                "y": 648172.6168749928
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "Midtown Hills Precinct",
+                "Address": "1441 12th Ave S",
+                "PhoneNumber": "(615) 880-1411",
+                "GLOBALID": "{14364EF9-9086-45EA-A18E-8ECA71C8D9C1}",
+                "CommanderName": "Commander Tommy Widener",
+                "CommunityCoordinator": "Sergeant Catherine Poole",
+                "Website": "http://www.nashville.gov/Police-Department/Precincts/Midtown-Hills-Precinct.aspx",
+                "City": "Nashville",
+                "State": "TN",
+                "ZipCode": "37203",
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": null,
+                "last_edited_date": null,
+                "OBJECTID": 13
+            },
+            "geometry": {
+                "x": 1735653.8660416603,
+                "y": 657560.1618749946
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "PASS",
+                "Address": "1900 Church St",
+                "PhoneNumber": "(615) 862-7887",
+                "GLOBALID": "{881E7311-DFAA-4319-A16C-C944A3DE0223}",
+                "CommanderName": "Dr. Carol Harp",
+                "CommunityCoordinator": null,
+                "Website": null,
+                "City": null,
+                "State": null,
+                "ZipCode": null,
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": null,
+                "last_edited_date": null,
+                "OBJECTID": 14
+            },
+            "geometry": {
+                "x": 1732530.4772916734,
+                "y": 663860.1447916627
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "Hazardous Devices",
+                "Address": "Stewarts Ferry Pike",
+                "PhoneNumber": "(615) 862-7740",
+                "GLOBALID": "{D07DA7F5-D3E0-4970-9268-2FCBC0446947}",
+                "CommanderName": "Sgt. David Haywood",
+                "CommunityCoordinator": null,
+                "Website": null,
+                "City": null,
+                "State": null,
+                "ZipCode": null,
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": null,
+                "last_edited_date": null,
+                "OBJECTID": 15
+            },
+            "geometry": {
+                "x": 1774486.792291671,
+                "y": 667919.2333333343
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "Crime Lab",
+                "Address": "430 Myatt Dr",
+                "PhoneNumber": "(615) 880-3111",
+                "GLOBALID": "{1C8D2631-4176-48D8-B8B8-2870498B0B9F}",
+                "CommanderName": "Commander Sebastian Gourdin",
+                "CommunityCoordinator": null,
+                "Website": null,
+                "City": "",
+                "State": null,
+                "ZipCode": null,
+                "created_user": null,
+                "created_date": null,
+                "last_edited_user": null,
+                "last_edited_date": null,
+                "OBJECTID": 16
+            },
+            "geometry": {
+                "x": 1764894.5597916692,
+                "y": 706881.2316666692
+            }
+        },
+        {
+            "attributes": {
+                "FacilityName": "Southeast Precinct",
+                "Address": "2467 Murfreesboro Pike",
+                "PhoneNumber": "615-862-7701",
+                "GLOBALID": "{96518D26-9A3C-4BD1-91B0-33A573D12123}",
+                "CommanderName": "Commander Carlos Lara",
+                "CommunityCoordinator": null,
+                "Website": "https://www.nashville.gov/departments/police/community-services/precincts/southeast-precinct",
+                "City": "Nashville",
+                "State": "TN",
+                "ZipCode": "37217",
+                "created_user": "EPGIS",
+                "created_date": 1762968089000,
+                "last_edited_user": "EPGIS",
+                "last_edited_date": 1762968698000,
+                "OBJECTID": 416
+            },
+            "geometry": {
+                "x": 1777512.584166661,
+                "y": 636370.865624994
+            }
+        }
+    ]
+}
