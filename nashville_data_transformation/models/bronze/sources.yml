@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: NASHVILLE_URBAN_DATA
+    schema: RAW_DATA
+    tables:
+      - name: BRONZE_NASHVILLE_311_SERVICE_REQUESTS
+      - name: BRONZE_NASHVILLE_HOUSING_PROPERTY_DATA
+      - name: BRONZE_NASHVILLE_PUBLIC_SAFETY_DATA
