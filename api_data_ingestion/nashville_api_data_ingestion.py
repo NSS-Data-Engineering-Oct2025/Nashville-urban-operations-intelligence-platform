@@ -10,14 +10,22 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def create_s3_client():
+    aws_profile = os.getenv("AWS_PROFILE")
+    aws_region = os.getenv("AWS_DEFAULT_REGION")
+
+    if aws_profile:
+        boto3_session = boto3.Session(
+            profile_name=aws_profile,
+            region_name=aws_region
+        )
+        return boto3_session.client("s3")
+
+    return boto3.client("s3", region_name=aws_region)
+
+
 def upload_file_to_s3(local_file_path, s3_folder, file_name):
-    s3_client = boto3.client(
-        "s3",
-        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-        aws_session_token=os.getenv("AWS_SESSION_TOKEN"),
-        region_name=os.getenv("AWS_DEFAULT_REGION")
-    )
+    s3_client = create_s3_client()
 
     bucket_name = os.getenv("S3_BUCKET_NAME")
     base_folder = os.getenv("S3_BASE_FOLDER")
@@ -108,15 +116,15 @@ def fetch_nashville_housing_property_data():
     )
 
 
-def fetch_nashville_public_safety_data():
+def fetch_nashville_property_standards_data():
     return fetch_api_data(
-        os.getenv("NASHVILLE_PUBLIC_SAFETY_API_URL"),
-        "nashville_public_safety_data",
-        "nashville_public_safety_data"
+        os.getenv("NASHVILLE_PROPERTY_STANDARDS_API_URL"),
+        "nashville_property_standards_data",
+        "nashville_property_standards_data"
     )
 
 
 if __name__ == "__main__":
     fetch_nashville_311_service_requests()
     fetch_nashville_housing_property_data()
-    fetch_nashville_public_safety_data()
+    fetch_nashville_property_standards_data()

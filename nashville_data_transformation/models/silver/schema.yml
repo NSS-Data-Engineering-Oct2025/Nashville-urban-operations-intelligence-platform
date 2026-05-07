@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: silver_nashville_311_service_requests
+    description: "Cleaned Nashville 311 service request data"
+    columns:
+      - name: REQUEST_ID
+        tests:
+          - not_null
+
+      - name: REQUEST_TYPE
+        tests:
+          - not_null
+
+  - name: silver_nashville_housing_property_data
+    description: "Cleaned Nashville housing property data"
+    columns:
+      - name: APN
+        tests:
+          - not_null
+
+  - name: silver_nashville_public_safety_data
+    description: "Cleaned Nashville public safety facility data"
+    columns:
+      - name: FACILITY_NAME
+        tests:
+          - not_null

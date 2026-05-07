@@ -1,0 +1,104 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: airflow_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
+  airflow_init:
+    image: apache/airflow:2.9.1
+    container_name: airflow_init
+    depends_on:
+      - postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: >
+        dbt-core==1.11.8
+        dbt-snowflake==1.11.4
+        snowflake-connector-python
+        boto3
+        awscli
+        python-dotenv
+        requests
+        pandas
+        psycopg2-binary
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ../:/opt/airflow/project
+      - airflow_logs:/opt/airflow/logs
+      - ${USERPROFILE}/.aws:/home/airflow/.aws
+    command: >
+      bash -c "
+      airflow db migrate &&
+      airflow users create --username admin --firstname admin --lastname admin --role Admin --email admin@example.com --password admin || true
+      "
+
+  airflow_webserver:
+    image: apache/airflow:2.9.1
+    container_name: nashville_airflow
+    restart: always
+    depends_on:
+      - postgres
+      - airflow_init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: >
+        dbt-core==1.11.8
+        dbt-snowflake==1.11.4
+        snowflake-connector-python
+        boto3
+        awscli
+        python-dotenv
+        requests
+        pandas
+        psycopg2-binary
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ../:/opt/airflow/project
+      - airflow_logs:/opt/airflow/logs
+      - ${USERPROFILE}/.aws:/home/airflow/.aws
+    ports:
+      - "8080:8080"
+    command: webserver
+
+  airflow_scheduler:
+    image: apache/airflow:2.9.1
+    container_name: airflow_scheduler
+    restart: always
+    depends_on:
+      - postgres
+      - airflow_init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: >
+        dbt-core==1.11.8
+        dbt-snowflake==1.11.4
+        snowflake-connector-python
+        boto3
+        awscli
+        python-dotenv
+        requests
+        pandas
+        psycopg2-binary
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ../:/opt/airflow/project
+      - airflow_logs:/opt/airflow/logs
+      - ${USERPROFILE}/.aws:/home/airflow/.aws
+    command: scheduler
+
+volumes:
+  postgres_db:
+  airflow_logs:

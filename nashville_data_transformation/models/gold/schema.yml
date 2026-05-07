@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: gold_311_requests_by_type
+    description: "Aggregated 311 requests by type"
+
+  - name: gold_311_requests_by_status
+    description: "Aggregated 311 requests by status"
+
+  - name: gold_housing_by_land_use
+    description: "Housing distribution by land use"
+
+  - name: gold_housing_by_city
+    description: "Housing statistics by city"
+
+  - name: gold_public_safety_by_city
+    description: "Public safety locations by city"

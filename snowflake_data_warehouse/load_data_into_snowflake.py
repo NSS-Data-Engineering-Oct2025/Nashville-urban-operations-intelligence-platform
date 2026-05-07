@@ -1,8 +1,28 @@
 import os
+import boto3
 import snowflake.connector
+
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
+def get_aws_credentials_from_profile():
+    aws_profile = os.getenv("AWS_PROFILE")
+    aws_region = os.getenv("AWS_DEFAULT_REGION")
+
+    boto3_session = boto3.Session(
+        profile_name=aws_profile,
+        region_name=aws_region
+    )
+
+    aws_credentials = boto3_session.get_credentials().get_frozen_credentials()
+
+    return {
+        "aws_access_key_id": aws_credentials.access_key,
+        "aws_secret_access_key": aws_credentials.secret_key,
+        "aws_session_token": aws_credentials.token
+    }
 
 
 def create_snowflake_connection():
@@ -21,20 +41,21 @@ def create_snowflake_connection():
 
 def create_snowflake_stage(snowflake_connection):
     snowflake_cursor = snowflake_connection.cursor()
+    aws_credentials = get_aws_credentials_from_profile()
 
     create_stage_query = f"""
     CREATE OR REPLACE STAGE nashville_s3_stage
     URL='s3://{os.getenv("S3_BUCKET_NAME")}/{os.getenv("S3_BASE_FOLDER")}/raw_data/'
     CREDENTIALS = (
-        AWS_KEY_ID = '{os.getenv("AWS_ACCESS_KEY_ID")}'
-        AWS_SECRET_KEY = '{os.getenv("AWS_SECRET_ACCESS_KEY")}'
-        AWS_TOKEN = '{os.getenv("AWS_SESSION_TOKEN")}'
+        AWS_KEY_ID = '{aws_credentials["aws_access_key_id"]}'
+        AWS_SECRET_KEY = '{aws_credentials["aws_secret_access_key"]}'
+        AWS_TOKEN = '{aws_credentials["aws_session_token"]}'
     )
     FILE_FORMAT = (TYPE = JSON);
     """
 
     snowflake_cursor.execute(create_stage_query)
-    print("Snowflake stage created successfully")
+    print("Snowflake stage created successfully with AWS profile credentials")
 
     snowflake_cursor.close()
 
