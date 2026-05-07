@@ -1,17 +1,53 @@
 version: 2
 
 models:
+
   - name: gold_311_requests_by_type
-    description: "Aggregated 311 requests by type"
+    description: Aggregated 311 requests grouped by request category.
+
+    columns:
+
+      - name: request_type
+        description: 311 request category.
+        tests:
+          - not_null
+
+      - name: total_requests
+        description: Total number of requests by request category.
+        tests:
+          - not_null
 
   - name: gold_311_requests_by_status
-    description: "Aggregated 311 requests by status"
+    description: Aggregated 311 requests grouped by request status.
 
-  - name: gold_housing_by_land_use
-    description: "Housing distribution by land use"
+    columns:
+
+      - name: status
+        description: Request status.
+        tests:
+          - not_null
+
+      - name: total_requests
+        description: Total number of requests by status.
+        tests:
+          - not_null
 
   - name: gold_housing_by_city
-    description: "Housing statistics by city"
+    description: Housing analytics grouped by city.
 
-  - name: gold_public_safety_by_city
-    description: "Public safety locations by city"
+    columns:
+
+      - name: property_city
+        description: Property city.
+        tests:
+          - not_null
+
+      - name: total_properties
+        description: Total property records by city.
+        tests:
+          - not_null
+
+      - name: average_appraised_value
+        description: Average appraised property value by city.
+        tests:
+          - not_null

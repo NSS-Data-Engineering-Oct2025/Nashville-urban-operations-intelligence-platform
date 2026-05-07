@@ -1,27 +1,34 @@
 version: 2
 
 models:
+
   - name: silver_nashville_311_service_requests
-    description: "Cleaned Nashville 311 service request data"
+    description: Cleaned Nashville 311 request records.
+
     columns:
-      - name: REQUEST_ID
+
+      - name: request_id
+        description: Unique request identifier from Nashville 311 source.
         tests:
           - not_null
 
-      - name: REQUEST_TYPE
+      - name: request_type
+        description: Main category of the 311 request.
+        tests:
+          - not_null
+
+      - name: status
+        description: Current request status.
         tests:
           - not_null
 
   - name: silver_nashville_housing_property_data
-    description: "Cleaned Nashville housing property data"
-    columns:
-      - name: APN
-        tests:
-          - not_null
+    description: Cleaned Nashville housing and property records.
 
-  - name: silver_nashville_public_safety_data
-    description: "Cleaned Nashville public safety facility data"
     columns:
-      - name: FACILITY_NAME
-        tests:
-          - not_null
+
+      - name: property_city
+        description: Property city from parcel records.
+
+      - name: total_appraised_value
+        description: Total appraised property value.
