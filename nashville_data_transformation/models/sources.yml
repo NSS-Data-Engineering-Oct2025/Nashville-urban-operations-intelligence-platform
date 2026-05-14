@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+
+  - name: raw_data
+    database: NASHVILLE_URBAN_DATA
+    schema: RAW_DATA
+
+    tables:
+
+      - name: raw_nashville_311_service_requests
+        identifier: RAW_NASHVILLE_311_SERVICE_REQUESTS
+
+      - name: raw_nashville_housing_property_data
+        identifier: RAW_NASHVILLE_HOUSING_PROPERTY_DATA

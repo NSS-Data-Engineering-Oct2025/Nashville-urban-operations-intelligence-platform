@@ -27,42 +27,148 @@ def create_silver_tables(snowflake_connection):
     create_311_silver_query = """
     CREATE OR REPLACE TABLE SILVER_NASHVILLE_311_SERVICE_REQUESTS AS
     SELECT
-        RAW_DATA:attributes.Request__::STRING AS REQUEST_ID,
-        RAW_DATA:attributes.Request_Type::STRING AS REQUEST_TYPE,
-        RAW_DATA:attributes.Subrequest_Type::STRING AS SUBREQUEST_TYPE,
-        RAW_DATA:attributes.Status::STRING AS STATUS,
-        RAW_DATA:attributes.City::STRING AS CITY,
-        RAW_DATA:attributes.ZIP::STRING AS ZIP_CODE,
-        RAW_DATA:attributes.Council_District::STRING AS COUNCIL_DISTRICT,
-        RAW_DATA:attributes.Latitude::FLOAT AS LATITUDE,
-        RAW_DATA:attributes.Longitude::FLOAT AS LONGITUDE,
-        TO_TIMESTAMP_NTZ(RAW_DATA:attributes.Date_Time_Opened::NUMBER / 1000) AS DATE_TIME_OPENED,
-        TO_TIMESTAMP_NTZ(RAW_DATA:attributes.Date_Time_Closed::NUMBER / 1000) AS DATE_TIME_CLOSED,
+        COALESCE(
+            f.value:attributes:"GlobalID"::STRING,
+            f.value:attributes:"OBJECTID"::STRING
+        ) AS REQUEST_ID,
+
+        COALESCE(
+            f.value:attributes:"Request_Type"::STRING,
+            f.value:attributes:"Additional_Subrequest_Type"::STRING,
+            f.value:attributes:"Subrequest_Type"::STRING
+        ) AS REQUEST_TYPE,
+
+        COALESCE(
+            f.value:attributes:"Subrequest_Type"::STRING,
+            f.value:attributes:"Additional_Subrequest_Type"::STRING
+        ) AS SUBREQUEST_TYPE,
+
+        COALESCE(
+            f.value:attributes:"Status"::STRING,
+            'Closed'
+        ) AS STATUS,
+
+        UPPER(TRIM(f.value:attributes:"City"::STRING)) AS CITY,
+
+        f.value:attributes:"Address"::STRING AS ADDRESS,
+
+        f.value:attributes:"Council_District"::STRING AS COUNCIL_DISTRICT,
+
+        TRY_TO_DOUBLE(f.value:attributes:"Latitude"::STRING) AS LATITUDE,
+
+        TRY_TO_DOUBLE(f.value:attributes:"Longitude"::STRING) AS LONGITUDE,
+
+        CASE
+            WHEN TRY_TO_NUMBER(f.value:attributes:"Date_Time_Opened"::STRING) IS NOT NULL
+            THEN TO_TIMESTAMP_NTZ(TRY_TO_NUMBER(f.value:attributes:"Date_Time_Opened"::STRING) / 1000)
+            ELSE TRY_TO_TIMESTAMP_NTZ(f.value:attributes:"Date_Time_Opened"::STRING)
+        END AS DATE_TIME_OPENED,
+
+        CASE
+            WHEN TRY_TO_NUMBER(f.value:attributes:"Date_Time_Closed"::STRING) IS NOT NULL
+            THEN TO_TIMESTAMP_NTZ(TRY_TO_NUMBER(f.value:attributes:"Date_Time_Closed"::STRING) / 1000)
+            ELSE TRY_TO_TIMESTAMP_NTZ(f.value:attributes:"Date_Time_Closed"::STRING)
+        END AS DATE_TIME_CLOSED,
+
         SOURCE_FILE_NAME,
         LOADED_AT
+
     FROM RAW_NASHVILLE_311_SERVICE_REQUESTS,
-    LATERAL FLATTEN(INPUT => RAW_DATA:features);
+    LATERAL FLATTEN(INPUT => RAW_DATA:features) f
+    WHERE f.value:attributes IS NOT NULL;
     """
 
     create_housing_silver_query = """
     CREATE OR REPLACE TABLE SILVER_NASHVILLE_HOUSING_PROPERTY_DATA AS
     SELECT
-        RAW_DATA:attributes.APN::STRING AS PARCEL_ID,
-        RAW_DATA:attributes.Owner::STRING AS OWNER_NAME,
-        RAW_DATA:attributes.PropAddr::STRING AS PROPERTY_ADDRESS,
-        RAW_DATA:attributes.PropCity::STRING AS PROPERTY_CITY,
-        RAW_DATA:attributes.PropState::STRING AS PROPERTY_STATE,
-        RAW_DATA:attributes.PropZip::STRING AS PROPERTY_ZIP_CODE,
-        RAW_DATA:attributes.LUDesc::STRING AS LAND_USE_DESCRIPTION,
-        RAW_DATA:attributes.TotlAppr::FLOAT AS TOTAL_APPRAISED_VALUE,
-        RAW_DATA:attributes.LandAppr::FLOAT AS LAND_APPRAISED_VALUE,
-        RAW_DATA:attributes.ImprAppr::FLOAT AS IMPROVEMENT_APPRAISED_VALUE,
-        RAW_DATA:attributes.Acres::FLOAT AS ACRES,
-        RAW_DATA:attributes.SalePrice::FLOAT AS SALE_PRICE,
+        f.value:attributes:"APN"::STRING AS PARCEL_ID,
+
+        COALESCE(
+            f.value:attributes:"Owner"::STRING,
+            f.value:attributes:"OwnerName"::STRING,
+            f.value:attributes:"OwnerName1"::STRING
+        ) AS OWNER_NAME,
+
+        COALESCE(
+            f.value:attributes:"PropAddr"::STRING,
+            f.value:attributes:"PropertyAddress"::STRING,
+            f.value:attributes:"Address"::STRING,
+            f.value:attributes:"SitusAddress"::STRING
+        ) AS PROPERTY_ADDRESS,
+
+        UPPER(TRIM(
+            COALESCE(
+                f.value:attributes:"PropCity"::STRING,
+                f.value:attributes:"PropertyCity"::STRING,
+                f.value:attributes:"SitusCity"::STRING,
+                f.value:attributes:"City"::STRING
+            )
+        )) AS PROPERTY_CITY,
+
+        COALESCE(
+            f.value:attributes:"PropState"::STRING,
+            f.value:attributes:"PropertyState"::STRING,
+            f.value:attributes:"State"::STRING
+        ) AS PROPERTY_STATE,
+
+        COALESCE(
+            f.value:attributes:"PropZip"::STRING,
+            f.value:attributes:"PropertyZip"::STRING,
+            f.value:attributes:"Zip"::STRING
+        ) AS PROPERTY_ZIP_CODE,
+
+        COALESCE(
+            f.value:attributes:"LUDesc"::STRING,
+            f.value:attributes:"LandUse"::STRING,
+            f.value:attributes:"LandUseDescription"::STRING,
+            f.value:attributes:"LUCode"::STRING
+        ) AS LAND_USE_DESCRIPTION,
+
+        TRY_TO_DOUBLE(
+            COALESCE(
+                f.value:attributes:"TotlAppr"::STRING,
+                f.value:attributes:"TotalAppr"::STRING,
+                f.value:attributes:"TotalAppraisal"::STRING,
+                f.value:attributes:"TotalAppraisedValue"::STRING
+            )
+        ) AS TOTAL_APPRAISED_VALUE,
+
+        TRY_TO_DOUBLE(
+            COALESCE(
+                f.value:attributes:"LandAppr"::STRING,
+                f.value:attributes:"LandAppraisal"::STRING,
+                f.value:attributes:"LandAppraisedValue"::STRING
+            )
+        ) AS LAND_APPRAISED_VALUE,
+
+        TRY_TO_DOUBLE(
+            COALESCE(
+                f.value:attributes:"ImprAppr"::STRING,
+                f.value:attributes:"ImprovementAppr"::STRING,
+                f.value:attributes:"ImprovementAppraisal"::STRING
+            )
+        ) AS IMPROVEMENT_APPRAISED_VALUE,
+
+        TRY_TO_DOUBLE(
+            COALESCE(
+                f.value:attributes:"Acres"::STRING,
+                f.value:attributes:"DeededAcreage"::STRING
+            )
+        ) AS ACRES,
+
+        TRY_TO_DOUBLE(
+            COALESCE(
+                f.value:attributes:"SalePrice"::STRING,
+                f.value:attributes:"SaleAmount"::STRING
+            )
+        ) AS SALE_PRICE,
+
         SOURCE_FILE_NAME,
         LOADED_AT
+
     FROM RAW_NASHVILLE_HOUSING_PROPERTY_DATA,
-    LATERAL FLATTEN(INPUT => RAW_DATA:features);
+    LATERAL FLATTEN(INPUT => RAW_DATA:features) f
+    WHERE f.value:attributes IS NOT NULL;
     """
 
     snowflake_cursor.execute(create_311_silver_query)
@@ -86,21 +192,20 @@ def preview_silver_tables(snowflake_connection):
             STATUS,
             CITY
         FROM SILVER_NASHVILLE_311_SERVICE_REQUESTS
-        LIMIT 5;
+        LIMIT 10;
         """,
         """
         SELECT
             PARCEL_ID,
-            OWNER_NAME,
             PROPERTY_CITY,
             LAND_USE_DESCRIPTION,
             TOTAL_APPRAISED_VALUE
         FROM SILVER_NASHVILLE_HOUSING_PROPERTY_DATA
-        LIMIT 5;
+        LIMIT 10;
         """
     ]
 
-    print("\nSilver table previews:")
+    print("\\nSilver table previews:")
 
     for preview_query in preview_queries:
         snowflake_cursor.execute(preview_query)
@@ -132,7 +237,7 @@ def check_silver_record_counts(snowflake_connection):
         """
     ]
 
-    print("\nSilver table record counts:")
+    print("\\nSilver table record counts:")
 
     for record_count_query in record_count_queries:
         snowflake_cursor.execute(record_count_query)

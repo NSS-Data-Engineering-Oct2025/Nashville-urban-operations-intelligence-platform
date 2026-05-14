@@ -1,7 +1,14 @@
+{{ config(materialized='table') }}
+
 SELECT
-    REQUEST_TYPE,
-    COUNT(*) AS TOTAL_REQUESTS
+    request_type,
+    COUNT(*) AS total_requests
+
 FROM {{ ref('silver_nashville_311_service_requests') }}
-WHERE REQUEST_TYPE IS NOT NULL
-GROUP BY REQUEST_TYPE
-ORDER BY TOTAL_REQUESTS DESC
+
+WHERE request_type IS NOT NULL
+  AND TRIM(request_type) <> ''
+
+GROUP BY request_type
+
+ORDER BY total_requests DESC

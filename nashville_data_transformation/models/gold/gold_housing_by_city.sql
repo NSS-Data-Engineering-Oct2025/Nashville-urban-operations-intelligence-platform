@@ -1,8 +1,15 @@
+{{ config(materialized='table') }}
+
 SELECT
-    PROPERTY_CITY,
-    COUNT(*) AS TOTAL_PROPERTIES,
-    AVG(TOTAL_APPRAISED_VALUE) AS AVERAGE_APPRAISED_VALUE
+    property_city,
+    COUNT(*) AS total_properties,
+    AVG(total_appraised_value) AS average_appraised_value
+
 FROM {{ ref('silver_nashville_housing_property_data') }}
-WHERE PROPERTY_CITY IS NOT NULL
-GROUP BY PROPERTY_CITY
-ORDER BY TOTAL_PROPERTIES DESC
+
+WHERE property_city IS NOT NULL
+  AND TRIM(property_city) <> ''
+
+GROUP BY property_city
+
+ORDER BY total_properties DESC

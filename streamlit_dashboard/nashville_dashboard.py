@@ -27,11 +27,11 @@ def load_data(query):
     return dataframe
 
 
-def safe_city(city):
-    return city.replace("'", "''")
+def safe_sql(value):
+    return value.replace("'", "''")
 
 
-def bar_chart(dataframe, x_column, y_column, title, x_title, color):
+def build_bar_chart(dataframe, x_column, y_column, title, color):
     chart = px.bar(
         dataframe.sort_values(x_column),
         x=x_column,
@@ -44,43 +44,38 @@ def bar_chart(dataframe, x_column, y_column, title, x_title, color):
 
     chart.update_traces(
         marker_color=color,
+        texttemplate="%{text:,.0f}",
         textposition="outside",
-        texttemplate="%{text:,}",
-        textfont=dict(
-            size=15,
-            color="#111827"
-        ),
+        textfont=dict(size=14, color="#111827"),
         cliponaxis=False
     )
 
     chart.update_layout(
-        height=430,
-        font=dict(
-            color="#111827",
-            size=15
-        ),
-        title_font=dict(
-            color="#111827",
-            size=22
-        ),
-        paper_bgcolor="white",
-        plot_bgcolor="white",
-        xaxis=dict(
-            title=x_title,
-            title_font=dict(size=16, color="#111827"),
-            tickfont=dict(size=14, color="#111827"),
-            gridcolor="#e5e7eb",
-            zerolinecolor="#9ca3af"
-        ),
-        yaxis=dict(
-            title="",
-            tickfont=dict(size=15, color="#111827")
-        ),
-        margin=dict(l=40, r=90, t=70, b=45),
+        height=410,
+        paper_bgcolor="rgba(255,255,255,0.96)",
+        plot_bgcolor="rgba(255,255,255,0.96)",
+        font=dict(size=14, color="#111827"),
+        title_font=dict(size=21, color="#111827"),
+        margin=dict(l=30, r=100, t=65, b=35),
+        xaxis=dict(title="", tickfont=dict(size=13, color="#111827"), gridcolor="#e5e7eb"),
+        yaxis=dict(title="", tickfont=dict(size=14, color="#111827")),
         showlegend=False
     )
 
     return chart
+
+
+def metric_card(label, value, note):
+    st.markdown(
+        f"""
+        <div class="metric-card">
+            <div class="metric-label">{label}</div>
+            <div class="metric-value">{value}</div>
+            <div class="metric-note">{note}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 st.set_page_config(
@@ -88,209 +83,203 @@ st.set_page_config(
     layout="wide"
 )
 
+
 st.markdown(
     """
     <style>
-
     .stApp {
-        background-color: #f4f7fb !important;
+        background:
+            radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 28%),
+            radial-gradient(circle at bottom right, rgba(124,58,237,0.08), transparent 30%),
+            linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%) !important;
         color: #111827 !important;
     }
 
     .block-container {
-        padding-top: 1rem;
+        padding-top: 3rem;
         padding-left: 2rem;
         padding-right: 2rem;
     }
 
-    /* SIDEBAR */
-
-    [data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        border-right: 1px solid #e5e7eb;
+    section[data-testid="stSidebar"] {
+        background: #ffffff !important;
+        border-right: 1px solid #dbe3ec;
+        box-shadow: 4px 0 18px rgba(15, 23, 42, 0.05);
     }
 
-    [data-testid="stSidebar"] * {
+    section[data-testid="stSidebar"] * {
         color: #111827 !important;
     }
-
-    [data-testid="stSidebarNav"] {
-        background: #ffffff !important;
-    }
-
-    /* TITLE */
 
     .title {
-        font-size: 34px;
-        font-weight: 800;
-        color: #111827 !important;
-        margin-bottom: 6px;
+        font-size: 42px;
+        font-weight: 900;
+        color: #0f172a !important;
+        margin-bottom: 10px;
     }
 
     .subtitle {
         font-size: 16px;
-        color: #4b5563 !important;
-        margin-bottom: 24px;
+        color: #475569 !important;
+        margin-bottom: 28px;
     }
 
-    /* METRIC CARDS */
-
     .metric-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 18px;
-        padding: 22px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        min-height: 120px;
+        background: rgba(255,255,255,0.95);
+        border: 1px solid #dce4ee;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 10px 24px rgba(15,23,42,0.05);
+        min-height: 125px;
     }
 
     .metric-label {
         font-size: 14px;
         font-weight: 700;
-        color: #4b5563 !important;
-        margin-bottom: 8px;
+        color: #64748b !important;
+        margin-bottom: 10px;
     }
 
     .metric-value {
-        font-size: 30px;
-        font-weight: 800;
-        color: #111827 !important;
+        font-size: 32px;
+        font-weight: 900;
+        color: #0f172a !important;
     }
 
     .metric-note {
         font-size: 13px;
-        color: #6b7280 !important;
-        margin-top: 6px;
+        color: #64748b !important;
+        margin-top: 8px;
     }
-
-    /* CHARTS */
 
     div[data-testid="stPlotlyChart"] {
-        background: white;
-        border-radius: 18px;
-        border: 1px solid #e5e7eb;
-        padding: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        background: rgba(255,255,255,0.96);
+        border: 1px solid #dce4ee;
+        border-radius: 20px;
+        padding: 12px;
+        box-shadow: 0 8px 22px rgba(15,23,42,0.05);
     }
 
-    /* SELECT BOX */
-
-    .stSelectbox label {
-        font-size: 15px !important;
-        font-weight: 700 !important;
-        color: #111827 !important;
-    }
-
-    div[data-baseweb="select"] {
-        background-color: white !important;
+    div[data-baseweb="select"] > div {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
         border-radius: 12px !important;
-        border: 1px solid #d1d5db !important;
+        min-height: 48px !important;
     }
 
-    div[data-baseweb="select"] * {
+    div[data-baseweb="select"] span,
+    div[data-baseweb="select"] input {
         color: #111827 !important;
-        background-color: white !important;
+        background-color: #ffffff !important;
     }
 
-    /* REMOVE DARK COLORS */
-
-    header {
-        background: #f4f7fb !important;
+    div[data-baseweb="popover"] {
+        background-color: #ffffff !important;
     }
 
-    /* TABS */
-
-    button[data-baseweb="tab"] {
-        color: #374151 !important;
-        font-weight: 600 !important;
+    ul {
+        background: #ffffff !important;
+        border-radius: 14px !important;
+        border: 1px solid #dce4ee !important;
+        box-shadow: 0 12px 30px rgba(15,23,42,0.12) !important;
     }
 
-    button[data-baseweb="tab"][aria-selected="true"] {
+    li {
+        background: #ffffff !important;
+        color: #111827 !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        padding: 12px 16px !important;
+    }
+
+    li:hover {
+        background: #eff6ff !important;
         color: #2563eb !important;
     }
 
+    li[aria-selected="true"] {
+        background: #dbeafe !important;
+        color: #1d4ed8 !important;
+        font-weight: 700 !important;
+    }
+
+    header {
+        background: transparent !important;
+    }
     </style>
     """,
     unsafe_allow_html=True
 )
 
 
-city_options_query = """
-SELECT CITY FROM GOLD_311_REQUESTS_BY_CITY_TYPE
-UNION
-SELECT CITY FROM GOLD_PROPERTY_VIOLATIONS_BY_CITY
-UNION
-SELECT PROPERTY_CITY AS CITY FROM GOLD_HOUSING_BY_CITY
-ORDER BY CITY;
-"""
+city_summary = load_data("""
+SELECT
+    CITY,
+    TOTAL_311_REQUESTS,
+    TOTAL_PROPERTY_VIOLATIONS,
+    TOTAL_PROPERTIES,
+    AVERAGE_APPRAISED_VALUE
+FROM GOLD_CITY_OPERATIONS_SUMMARY
+ORDER BY TOTAL_311_REQUESTS DESC;
+""")
 
-city_options_dataframe = load_data(city_options_query)
-
-city_options = ["All Cities"] + city_options_dataframe["CITY"].dropna().tolist()
+city_options = ["ALL CITIES"] + city_summary["CITY"].dropna().tolist()
 
 st.sidebar.markdown("## Filters")
 
 selected_city = st.sidebar.selectbox(
-    "Select City",
-    city_options
+    "City",
+    city_options,
+    index=0
 )
 
 st.sidebar.markdown("---")
-
-st.sidebar.markdown("## Focus")
-
-st.sidebar.markdown("311 Requests")
-st.sidebar.markdown("Property Violations")
-st.sidebar.markdown("Housing / Property")
+st.sidebar.markdown("## Dashboard")
+st.sidebar.markdown("311 Service Requests")
+st.sidebar.markdown("Property Appraisals")
+st.sidebar.markdown("Housing Analytics")
 
 
-if selected_city == "All Cities":
+if selected_city == "ALL CITIES":
+    selected_summary = pd.DataFrame({
+        "TOTAL_311_REQUESTS": [city_summary["TOTAL_311_REQUESTS"].sum()],
+        "TOTAL_PROPERTY_VIOLATIONS": [city_summary["TOTAL_PROPERTY_VIOLATIONS"].sum()],
+        "TOTAL_PROPERTIES": [city_summary["TOTAL_PROPERTIES"].sum()],
+        "AVERAGE_APPRAISED_VALUE": [city_summary["AVERAGE_APPRAISED_VALUE"].mean()]
+    })
 
     requests_by_type_query = """
     SELECT REQUEST_TYPE, TOTAL_REQUESTS
     FROM GOLD_311_REQUESTS_BY_TYPE
     ORDER BY TOTAL_REQUESTS DESC
-    LIMIT 6;
+    LIMIT 7;
     """
 
-    requests_by_status_query = """
-    SELECT STATUS, TOTAL_REQUESTS
-    FROM GOLD_311_REQUESTS_BY_STATUS
-    ORDER BY TOTAL_REQUESTS DESC
-    LIMIT 6;
-    """
-
-    property_violations_query = """
-    SELECT CITY, TOTAL_REQUESTS
-    FROM GOLD_PROPERTY_VIOLATIONS_BY_CITY
-    ORDER BY TOTAL_REQUESTS DESC
-    LIMIT 6;
-    """
-
-    property_violations_type_query = """
-    SELECT SUBREQUEST_TYPE, TOTAL_REQUESTS
-    FROM GOLD_PROPERTY_VIOLATIONS_BY_SUBREQUEST_TYPE
-    ORDER BY TOTAL_REQUESTS DESC
-    LIMIT 6;
-    """
-
-    housing_city_query = """
-    SELECT PROPERTY_CITY, TOTAL_PROPERTIES, AVERAGE_APPRAISED_VALUE
+    property_appraisals_query = """
+    SELECT PROPERTY_CITY, AVERAGE_APPRAISED_VALUE
     FROM GOLD_HOUSING_BY_CITY
-    ORDER BY TOTAL_PROPERTIES DESC
-    LIMIT 6;
+    ORDER BY AVERAGE_APPRAISED_VALUE DESC
+    LIMIT 7;
     """
 
     housing_land_use_query = """
-    SELECT LAND_USE_DESCRIPTION, TOTAL_PROPERTIES, AVERAGE_APPRAISED_VALUE
+    SELECT LAND_USE_DESCRIPTION, TOTAL_PROPERTIES
     FROM GOLD_HOUSING_BY_LAND_USE
     ORDER BY TOTAL_PROPERTIES DESC
-    LIMIT 6;
+    LIMIT 7;
+    """
+
+    city_comparison_query = """
+    SELECT CITY, TOTAL_311_REQUESTS
+    FROM GOLD_CITY_OPERATIONS_SUMMARY
+    ORDER BY TOTAL_311_REQUESTS DESC
+    LIMIT 10;
     """
 
 else:
+    city = safe_sql(selected_city)
 
-    city = safe_city(selected_city)
+    selected_summary = city_summary[city_summary["CITY"] == selected_city]
 
     requests_by_type_query = f"""
     SELECT REQUEST_TYPE, SUM(TOTAL_REQUESTS) AS TOTAL_REQUESTS
@@ -298,91 +287,47 @@ else:
     WHERE CITY = '{city}'
     GROUP BY REQUEST_TYPE
     ORDER BY TOTAL_REQUESTS DESC
-    LIMIT 6;
+    LIMIT 7;
     """
 
-    requests_by_status_query = f"""
-    SELECT STATUS, SUM(TOTAL_REQUESTS) AS TOTAL_REQUESTS
-    FROM GOLD_311_REQUESTS_BY_CITY_STATUS
-    WHERE CITY = '{city}'
-    GROUP BY STATUS
-    ORDER BY TOTAL_REQUESTS DESC
-    LIMIT 6;
-    """
-
-    property_violations_query = f"""
-    SELECT CITY, TOTAL_REQUESTS
-    FROM GOLD_PROPERTY_VIOLATIONS_BY_CITY
-    WHERE CITY = '{city}'
-    ORDER BY TOTAL_REQUESTS DESC
-    LIMIT 6;
-    """
-
-    property_violations_type_query = f"""
-    SELECT SUBREQUEST_TYPE, SUM(TOTAL_REQUESTS) AS TOTAL_REQUESTS
-    FROM GOLD_PROPERTY_VIOLATIONS_BY_CITY_TYPE
-    WHERE CITY = '{city}'
-    GROUP BY SUBREQUEST_TYPE
-    ORDER BY TOTAL_REQUESTS DESC
-    LIMIT 6;
-    """
-
-    housing_city_query = f"""
-    SELECT PROPERTY_CITY, TOTAL_PROPERTIES, AVERAGE_APPRAISED_VALUE
+    property_appraisals_query = f"""
+    SELECT PROPERTY_CITY, AVERAGE_APPRAISED_VALUE
     FROM GOLD_HOUSING_BY_CITY
     WHERE PROPERTY_CITY = '{city}'
-    ORDER BY TOTAL_PROPERTIES DESC
-    LIMIT 6;
+    ORDER BY AVERAGE_APPRAISED_VALUE DESC;
     """
 
     housing_land_use_query = f"""
-    SELECT LAND_USE_DESCRIPTION,
-           SUM(TOTAL_PROPERTIES) AS TOTAL_PROPERTIES,
-           AVG(AVERAGE_APPRAISED_VALUE) AS AVERAGE_APPRAISED_VALUE
+    SELECT LAND_USE_DESCRIPTION, SUM(TOTAL_PROPERTIES) AS TOTAL_PROPERTIES
     FROM GOLD_HOUSING_BY_CITY_LAND_USE
     WHERE PROPERTY_CITY = '{city}'
     GROUP BY LAND_USE_DESCRIPTION
     ORDER BY TOTAL_PROPERTIES DESC
-    LIMIT 6;
+    LIMIT 7;
+    """
+
+    city_comparison_query = f"""
+    SELECT CITY, TOTAL_311_REQUESTS
+    FROM GOLD_CITY_OPERATIONS_SUMMARY
+    WHERE CITY = '{city}';
     """
 
 
 requests_by_type = load_data(requests_by_type_query)
-requests_by_status = load_data(requests_by_status_query)
-property_violations = load_data(property_violations_query)
-property_violations_type = load_data(property_violations_type_query)
-housing_city = load_data(housing_city_query)
+property_appraisals = load_data(property_appraisals_query)
 housing_land_use = load_data(housing_land_use_query)
+city_comparison = load_data(city_comparison_query)
 
 
-total_requests = (
-    int(requests_by_type["TOTAL_REQUESTS"].sum())
-    if not requests_by_type.empty else 0
-)
-
-total_property_violations = (
-    int(property_violations["TOTAL_REQUESTS"].sum())
-    if not property_violations.empty else 0
-)
-
-total_properties = (
-    int(housing_city["TOTAL_PROPERTIES"].sum())
-    if not housing_city.empty else 0
-)
-
-top_land_use = (
-    housing_land_use.iloc[0]["LAND_USE_DESCRIPTION"]
-    if not housing_land_use.empty else "No data"
-)
+total_requests = int(selected_summary["TOTAL_311_REQUESTS"].iloc[0]) if not selected_summary.empty else 0
+total_property_violations = int(selected_summary["TOTAL_PROPERTY_VIOLATIONS"].iloc[0]) if not selected_summary.empty else 0
+total_properties = int(selected_summary["TOTAL_PROPERTIES"].iloc[0]) if not selected_summary.empty else 0
+average_appraised_value = float(selected_summary["AVERAGE_APPRAISED_VALUE"].iloc[0]) if not selected_summary.empty else 0
 
 
+st.markdown("<div class='title'>Nashville Urban Operations Dashboard</div>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='title'>Nashville Urban Operations Dashboard</div>",
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    f"<div class='subtitle'>City-level analytics for <b>{selected_city}</b></div>",
+    f"<div class='subtitle'>City operations summary for <b>{selected_city}</b></div>",
     unsafe_allow_html=True
 )
 
@@ -390,51 +335,31 @@ st.markdown(
 metric_one, metric_two, metric_three, metric_four = st.columns(4)
 
 with metric_one:
-    st.markdown(
-        f"""
-        <div class="metric-card">
-            <div class="metric-label">311 Requests</div>
-            <div class="metric-value">{total_requests:,}</div>
-            <div class="metric-note">Filtered by selected city</div>
-        </div>
-        """,
-        unsafe_allow_html=True
+    metric_card(
+        "311 Requests",
+        f"{total_requests:,}",
+        "Service request activity"
     )
 
 with metric_two:
-    st.markdown(
-        f"""
-        <div class="metric-card">
-            <div class="metric-label">Property Violations</div>
-            <div class="metric-value">{total_property_violations:,}</div>
-            <div class="metric-note">Code-related request activity</div>
-        </div>
-        """,
-        unsafe_allow_html=True
+    metric_card(
+        "Property Violations",
+        f"{total_property_violations:,}",
+        "Property-related activity"
     )
 
 with metric_three:
-    st.markdown(
-        f"""
-        <div class="metric-card">
-            <div class="metric-label">Properties</div>
-            <div class="metric-value">{total_properties:,}</div>
-            <div class="metric-note">Housing/property records</div>
-        </div>
-        """,
-        unsafe_allow_html=True
+    metric_card(
+        "Property Records",
+        f"{total_properties:,}",
+        "Housing/property records"
     )
 
 with metric_four:
-    st.markdown(
-        f"""
-        <div class="metric-card">
-            <div class="metric-label">Top Land Use</div>
-            <div class="metric-value">{top_land_use[:22]}</div>
-            <div class="metric-note">Most common property use</div>
-        </div>
-        """,
-        unsafe_allow_html=True
+    metric_card(
+        "Average Appraised Value",
+        f"${average_appraised_value:,.0f}",
+        "Property valuation average"
     )
 
 
@@ -443,86 +368,80 @@ st.markdown("## Operations Summary")
 top_left, top_right = st.columns(2)
 
 with top_left:
-    st.plotly_chart(
-        bar_chart(
-            requests_by_type,
-            "TOTAL_REQUESTS",
-            "REQUEST_TYPE",
-            "Top 311 Request Categories",
-            "Requests",
-            "#2563eb"
-        ),
-        use_container_width=True,
-        key="request_categories_chart"
-    )
+    if requests_by_type.empty:
+        st.info("No 311 request data available for this city.")
+    else:
+        st.plotly_chart(
+            build_bar_chart(
+                requests_by_type,
+                "TOTAL_REQUESTS",
+                "REQUEST_TYPE",
+                "Top 311 Request Categories",
+                "#2563eb"
+            ),
+            use_container_width=True
+        )
 
 with top_right:
-    st.plotly_chart(
-        bar_chart(
-            requests_by_status,
-            "TOTAL_REQUESTS",
-            "STATUS",
-            "311 Request Status",
-            "Requests",
-            "#059669"
-        ),
-        use_container_width=True,
-        key="request_status_chart"
-    )
+    if property_appraisals.empty:
+        st.info("No property appraisal data available.")
+    else:
+        st.plotly_chart(
+            build_bar_chart(
+                property_appraisals,
+                "AVERAGE_APPRAISED_VALUE",
+                "PROPERTY_CITY",
+                "Average Property Appraisals",
+                "#059669"
+            ),
+            use_container_width=True
+        )
 
+
+st.markdown("## Housing and City Analytics")
 
 bottom_left, bottom_right = st.columns(2)
 
 with bottom_left:
-
-    y_column = (
-        "CITY"
-        if selected_city == "All Cities"
-        else "SUBREQUEST_TYPE"
-    )
-
-    title = (
-        "Top Property Violation Cities"
-        if selected_city == "All Cities"
-        else "Property Violation Types"
-    )
-
-    dataframe = (
-        property_violations
-        if selected_city == "All Cities"
-        else property_violations_type
-    )
-
-    st.plotly_chart(
-        bar_chart(
-            dataframe,
-            "TOTAL_REQUESTS",
-            y_column,
-            title,
-            "Violations",
-            "#dc2626"
-        ),
-        use_container_width=True,
-        key="property_violations_chart"
-    )
+    if city_comparison.empty:
+        st.info("No city comparison data available.")
+    else:
+        st.plotly_chart(
+            build_bar_chart(
+                city_comparison,
+                "TOTAL_311_REQUESTS",
+                "CITY",
+                "311 Requests by City",
+                "#dc2626"
+            ),
+            use_container_width=True
+        )
 
 with bottom_right:
-    st.plotly_chart(
-        bar_chart(
-            housing_land_use,
-            "TOTAL_PROPERTIES",
-            "LAND_USE_DESCRIPTION",
-            "Top Housing Land Uses",
-            "Properties",
-            "#7c3aed"
-        ),
-        use_container_width=True,
-        key="housing_land_use_chart"
-    )
+    if housing_land_use.empty:
+        st.info("No housing land use data available.")
+    else:
+        st.plotly_chart(
+            build_bar_chart(
+                housing_land_use,
+                "TOTAL_PROPERTIES",
+                "LAND_USE_DESCRIPTION",
+                "Housing Land Use",
+                "#7c3aed"
+            ),
+            use_container_width=True
+        )
 
 
-with st.expander("View Filtered Gold Data"):
+with st.expander("View filtered data"):
+    st.write("City Summary")
+    st.dataframe(selected_summary, use_container_width=True)
+
+    st.write("311 Request Categories")
     st.dataframe(requests_by_type, use_container_width=True)
-    st.dataframe(requests_by_status, use_container_width=True)
-    st.dataframe(property_violations, use_container_width=True)
+
+    st.write("Property Appraisals")
+    st.dataframe(property_appraisals, use_container_width=True)
+
+    st.write("Housing Land Use")
     st.dataframe(housing_land_use, use_container_width=True)

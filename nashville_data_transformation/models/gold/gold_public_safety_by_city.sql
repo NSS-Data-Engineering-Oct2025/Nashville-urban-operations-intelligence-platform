@@ -1,7 +1,4 @@
+{{ config(enabled=false) }}
+
 SELECT
-    CITY,
-    COUNT(*) AS TOTAL_PUBLIC_SAFETY_LOCATIONS
-FROM {{ ref('silver_nashville_public_safety_data') }}
-WHERE CITY IS NOT NULL
-GROUP BY CITY
-ORDER BY TOTAL_PUBLIC_SAFETY_LOCATIONS DESC
+    NULL AS placeholder

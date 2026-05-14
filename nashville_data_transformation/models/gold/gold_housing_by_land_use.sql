@@ -1,10 +1,17 @@
+{{ config(materialized='table') }}
+
 SELECT
-    LAND_USE_DESCRIPTION,
-    COUNT(*) AS TOTAL_PROPERTIES,
-    AVG(TOTAL_APPRAISED_VALUE) AS AVERAGE_APPRAISED_VALUE,
-    MIN(TOTAL_APPRAISED_VALUE) AS MINIMUM_APPRAISED_VALUE,
-    MAX(TOTAL_APPRAISED_VALUE) AS MAXIMUM_APPRAISED_VALUE
+    land_use_description,
+    COUNT(*) AS total_properties,
+    AVG(total_appraised_value) AS average_appraised_value,
+    MIN(total_appraised_value) AS minimum_appraised_value,
+    MAX(total_appraised_value) AS maximum_appraised_value
+
 FROM {{ ref('silver_nashville_housing_property_data') }}
-WHERE LAND_USE_DESCRIPTION IS NOT NULL
-GROUP BY LAND_USE_DESCRIPTION
-ORDER BY TOTAL_PROPERTIES DESC
+
+WHERE land_use_description IS NOT NULL
+  AND TRIM(land_use_description) <> ''
+
+GROUP BY land_use_description
+
+ORDER BY total_properties DESC
